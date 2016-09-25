@@ -35,7 +35,7 @@ class TwitterClient
   private
 
   def search(query)
-    @rest_client.search("#{query} -rt -from:#{@username}", { lang: 'en', result_type: 'popular' }).first
+    @rest_client.search("#{query} -rt -from:#{@username}", { lang: 'en', result_type: 'mixed' }).first
   end
 
   def random_follower_of_follower

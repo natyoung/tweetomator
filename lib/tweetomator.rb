@@ -23,7 +23,7 @@ class Tweetomator
     @flickr_client = FlickrClient.new(ENV['FLICKR_API_KEY'],
                                       ENV['FLICKR_SHARED_SECRET'])
 
-    @segmenter = PragmaticSegmenter::Segmenter.new(text: File.read('../text/input.txt'))
+    @segmenter = PragmaticSegmenter::Segmenter.new(text: File.read(ENV['MARKOV_CHAIN_INPUT_TEXT_FILE']))
     @sentences = @segmenter.segment
     @markov_chain = MarkovChain.new(Fixed::MaxLength, @sentences)
     stopped = @markov_chain.words.reject { |w| Stopwords.is?(w) }.map { |word| word[0].to_s.strip.downcase }
