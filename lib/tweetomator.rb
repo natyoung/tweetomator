@@ -33,12 +33,16 @@ class Tweetomator
 
   def run_once
     r = (1..9).to_a.sample
-    if r < 4
+    if r < 3
+      tweet!
+    elsif r < 6
       tweet_with_image!
     elsif r < 7
-      tweet!
-    else
       follow!
+    elsif r < 8
+      retweet!
+    else
+      favorite!
     end
   end
 
@@ -60,12 +64,14 @@ class Tweetomator
   end
 
   def follow!
-    user = @twitter_client.random_follower_of_follower
-    @twitter_client.follow(user) if user
+    @twitter_client.follow
   end
 
   def retweet!
-    tweet = @twitter_client.search("#{@hashtags.sample}")
-    @twitter_client.retweet(tweet.id)
+    @twitter_client.retweet(@hashtags.sample)
+  end
+
+  def favorite!
+    @twitter_client.favorite(@hashtags.sample)
   end
 end

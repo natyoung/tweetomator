@@ -9,11 +9,6 @@ class TwitterClient
     @username = username
   end
 
-  def random_follower_of_follower
-    follower = @rest_client.followers.attrs[:users].sample[:screen_name]
-    @rest_client.friend_ids(follower).attrs[:ids].sample if follower
-  end
-
   def update_with_media(text, image_file)
     @rest_client.update_with_media(text, image_file)
   end
@@ -22,15 +17,29 @@ class TwitterClient
     @rest_client.update(text)
   end
 
+  def retweet(query)
+    tweet = search(query)
+    @rest_client.retweet(tweet.id)
+  end
+
+  def follow
+    user = random_follower_of_follower
+    @rest_client.follow(user) if user
+  end
+
+  def favorite(query)
+    tweet = search(query)
+    @rest_client.favorite(tweet.id)
+  end
+
+  private
+
   def search(query)
-    @rest_client.search("#{query} -rt -from:#{@username}", { lang: 'en' }).first
+    @rest_client.search("#{query} -rt -from:#{@username}", { lang: 'en', result_type: 'popular' }).first
   end
 
-  def retweet(tweet_id)
-    @rest_client.retweet(tweet_id)
-  end
-
-  def follow(user)
-    @rest_client.follow(user)
+  def random_follower_of_follower
+    follower = @rest_client.followers.attrs[:users].sample[:screen_name]
+    @rest_client.friend_ids(follower).attrs[:ids].sample if follower
   end
 end
