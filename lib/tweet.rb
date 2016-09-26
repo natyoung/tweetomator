@@ -31,7 +31,7 @@ class Tweet
     end
 
     hashtag = "##{hashtags.sample}"
-    if out.length == text.length && text.length < @max_length + hashtag.length
+    if out.length == text.length && text.length < @max_length + hashtag.length && [true, false].sample
       out = append(out, hashtag)
     end
     out
