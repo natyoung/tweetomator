@@ -26,9 +26,14 @@ class Tweetomator
     @segmenter = PragmaticSegmenter::Segmenter.new(text: File.read(ENV['MARKOV_CHAIN_INPUT_TEXT_FILE']))
     @sentences = @segmenter.segment
     @markov_chain = MarkovChain.new(Fixed::MaxLength, @sentences)
-    stopped = @markov_chain.words.reject { |w| Stopwords.is?(w) }.map { |word| word[0].to_s.strip.downcase }
-    counted = stopped.reduce(Hash.new(0)) { |h, w| h[w] += 1; h }
-    @hashtags = counted.sort_by{ |_, count| count }.last(10).map { |s| s[0] }.reject { |w| /.*\W+.*/.match(w) != nil }
+    @hashtags = @markov_chain.words
+                    .map { |word| word[0].to_s.strip.downcase }
+                    .reject { |w| Stopwords.is?(w) }
+                    .reduce(Hash.new(0)) { |h, w| h[w] += 1; h }
+                    .sort_by{ |_, count| count }
+                    .last(10).reverse
+                    .map { |s| s[0] }
+                    .reject { |w| /.*\W+.*/.match(w) != nil }
   end
 
   def run_once
