@@ -27,13 +27,12 @@ class Tweetomator
     @sentences = @segmenter.segment
     @markov_chain = MarkovChain.new(Fixed::MaxLength, @sentences)
     @hashtags = @markov_chain.words
-                    .map { |word| word[0].to_s.strip.downcase }
-                    .reject { |w| Stopwords.is?(w) }
+                    .map { |word| word[0].to_s.strip.downcase.gsub(/\W+/, '') }
+                    .reject { |w| Stopwords.is?(w) || w.empty? }
                     .reduce(Hash.new(0)) { |h, w| h[w] += 1; h }
                     .sort_by{ |_, count| count }
                     .last(10).reverse
                     .map { |s| s[0] }
-                    .reject { |w| /.*\W+.*/.match(w) != nil }
   end
 
   def run_once
